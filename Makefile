@@ -3,7 +3,7 @@ PYTHON_DEV = /usr/include/python2.7
 
 build: ; \
     gcc -g -shared -O2 -fPIC \
-    -o pyforestdb.so pyforestdb.c \
+    -o pyforestdb.so src/pyforestdb.c \
     -I $(PYTHON_DEV) \
     -I $(FORESTDB_SRC)/include \
     -I $(FORESTDB_SRC)/option \
@@ -13,8 +13,7 @@ build: ; \
     -lforestdb
 
 clean: ; \
-    rm -f pyforestdb.so \
-    rm -f test.fdb
+    rm -f pyforestdb.so test.fdb *.pyc
 
 test: ; \
     python tests.py -v
