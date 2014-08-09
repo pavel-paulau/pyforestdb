@@ -1,15 +1,13 @@
 #include <Python.h>
 #include "forestdb.h"
 
-fdb_handle db;
-fdb_config config;
+fdb_handle *db;
 
 
 static PyObject *
 db_open(PyObject *self, PyObject *args)
 {
-    memset(&config, 0, sizeof(fdb_config));
-    config.chunksize = config.offsetsize = sizeof(uint64_t);
+    fdb_config config = fdb_get_default_config();
 
     char *dbname;
     if (!PyArg_ParseTuple(args, "s", &dbname))
@@ -31,7 +29,7 @@ db_close(PyObject *self, PyObject *args)
 {
     fdb_status ret;
 
-    ret = fdb_close(&db);
+    ret = fdb_close(db);
     if (ret != FDB_RESULT_SUCCESS) {
         perror("\nError closing file");
     }
@@ -52,7 +50,7 @@ set(PyObject *self, PyObject *args)
     fdb_status ret;
 
     fdb_doc_create(&doc, key, strlen(key), NULL, 0, body, strlen(body));
-    ret = fdb_set(&db, doc);
+    ret = fdb_set(db, doc);
 
     if (ret != FDB_RESULT_SUCCESS) {
         perror("\nError during set");
@@ -73,7 +71,7 @@ get(PyObject *self, PyObject *args)
     fdb_status ret;
 
     fdb_doc_create(&rdoc, key, strlen(key), NULL, 0, NULL, 0);
-    ret = fdb_get(&db, rdoc);
+    ret = fdb_get(db, rdoc);
 
     if (ret != FDB_RESULT_SUCCESS) {
         perror("\nError during get");
